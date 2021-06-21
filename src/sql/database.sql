@@ -1,4 +1,4 @@
-CREATE DATABASE todo;
+CREATE DATABASE todo_nodejs;
 
 CREATE TABLE users (
     id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -6,7 +6,7 @@ CREATE TABLE users (
     lastname VARCHAR(200),
     email   text NOT NULL,
     password VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIME
+    created_at timestamp NULL DEFAULT NULL
 );
 
 DESCRIBE users;
@@ -24,8 +24,8 @@ DESCRIBE tasks;
 
 CREATE TABLE categories (
   id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  title varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
-  description text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  title varchar(100) NOT NULL DEFAULT '',
+  description text,
   created_at timestamp NULL DEFAULT NULL
 );
 
