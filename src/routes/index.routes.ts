@@ -1,9 +1,10 @@
 import { Router } from 'express'
-import { home } from '../controllers/index.controller'
+import { home } from '../controllers/index.controller';
 
 const router = Router();
 
 router.route('/')
-    .get(home);
+    .get(home)
+    
 
 export default router;

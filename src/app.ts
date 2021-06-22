@@ -1,11 +1,11 @@
-import express, { Application } from 'express';
+import express, { Application, urlencoded } from 'express';
 import morgan from 'morgan';
-import passport from 'passport';
-import session from 'express-session';
+import cors from 'cors';
 
 // Routes
 import IndexRoutes from './routes/index.routes';
-import AuthRoutes from './routes/auth.routes';
+import CategoriesRoutes from './routes/categories.routes';
+import UsersRoutes from './routes/users.routes';
 
 export class App {
 
@@ -24,15 +24,15 @@ export class App {
 
     middlewares() {
         this.app.use(morgan('dev'));
+        this.app.use(urlencoded({extended: false}));
         this.app.use(express.json());
-        this.app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized:true})); // session secret
-        this.app.use(passport.initialize());
-        this.app.use(passport.session()); // persistent login sessions
+        this.app.use(cors());  
     }
 
     routes() {
         this.app.use(IndexRoutes);
-        this.app.use('/auth', AuthRoutes);
+        this.app.use('/categories', CategoriesRoutes);
+        this.app.use('/users', UsersRoutes);
     }
 
     async listen() {

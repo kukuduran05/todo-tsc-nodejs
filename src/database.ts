@@ -9,5 +9,9 @@ export async function connect () {
         connectionLimit: 10
     });
 
+    connection.once('open', () => {
+        console.log('Database is connected!');
+    });
+
     return connection;
 }
