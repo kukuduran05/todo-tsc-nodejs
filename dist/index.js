@@ -18,25 +18,35 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = require("./app");
+const express_1 = __importStar(require("express"));
 const dotenv = __importStar(require("dotenv"));
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        dotenv.config();
-        const PORT = parseInt(process.env.PORT, 10);
-        const app = new app_1.App(PORT);
-        yield app.listen();
-    });
-}
-main();
+const morgan_1 = __importDefault(require("morgan"));
+const cors_1 = __importDefault(require("cors"));
+const body_parser_1 = __importDefault(require("body-parser"));
+// Initialize configuration
+dotenv.config();
+// Routes
+const index_routes_1 = require("./routes/index.routes");
+//import UsersRoutes from './routes/users.routes';
+//import CategoryRoutes from './routes/categories.routes';
+const app = express_1.default();
+const PORT = parseInt(process.env.PORT, 10);
+// Middlewares
+app.use(morgan_1.default('dev'));
+app.use(express_1.urlencoded({ extended: false }));
+app.use(body_parser_1.default.json());
+app.use(express_1.default.json());
+app.use(cors_1.default());
+// Api routes
+app.use('/auth', index_routes_1.authRouter);
+//app.use('/users', UsersRoutes);
+//app.use('/categories', CategoryRoutes);
+// Start the Express server
+app.listen(PORT, () => {
+    console.log(`Server started at http://localhost:${PORT}`);
+});
 //# sourceMappingURL=index.js.map

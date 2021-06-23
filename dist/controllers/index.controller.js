@@ -1,19 +1,51 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.post_login = exports.get_login = exports.home = void 0;
-function home(req, res) {
-    // Si ya iniciamos sesion mostrar bienvenida
-    // Si no hemos iniciado sesion redireccionar a /login
-    return res.send(`The API is at http://localhost:${process.env.PORT}`);
+// DB
+//import { connect } from '../database';
+//import { MemoryStore } from 'express-session';
+/*
+export async function register(req: Request, res: Response): Promise<Response> {
+   const password = req.body.password;
+   // Generate salt to hash password
+   const salt = await bcrypt.genSalt(10);
+   const encryptedPassword = await bcrypt.hash(password, salt);
+   let created = new Date();
+   var users = {
+      "name": req.body.name,
+      "lastname": req.body.lastname,
+      "email": req.body.email,
+      "password": encryptedPassword,
+      //"created_at": Date.now()
+   }
+   
+   const conn = await connect();
+   await conn.query('INSERT INTO users SET ?', users, function (error, results, fields){
+      if (error) throw error;
+      return results;
+   });
+   return res.send({
+      message: 'User created Successfully',
+      data: users
+   });
+   //return res.send(`The API is at http://localhost:${process.env.PORT}`);
 }
-exports.home = home;
-function get_login(req, res) {
-    // Mostrar el formulario de login
-    return res.send("Deberia mostrar la vista de login!");
+
+export async function login(req: Request, res: Response): Promise<Response> {
+   const email = req.body.email;
+   const conn = connect();
+   var sql = 'SELECT * FROM users WHERE email = ' + mysql.escape(email);
+   let usrs = (await conn).query(sql, function(err, res){
+      return res;
+   });
+   console.log(usrs);
+
+
+   // Show form login
+   return res.send("Deberia mostrar la vista de login!");
 }
-exports.get_login = get_login;
-function post_login(req, res) {
-    return res.send("Recibir credenciales");
-}
-exports.post_login = post_login;
+
+export function post_login(req: Request, res: Response): Response {
+   
+   return res.send("Recibir credenciales");
+}*/
 //# sourceMappingURL=index.controller.js.map

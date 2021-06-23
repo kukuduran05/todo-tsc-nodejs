@@ -36,9 +36,9 @@ const express_1 = __importStar(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 // Routes
-const index_routes_1 = __importDefault(require("./routes/index.routes"));
-const categories_routes_1 = __importDefault(require("./routes/categories.routes"));
-const users_routes_1 = __importDefault(require("./routes/users.routes"));
+//import IndexRoutes from './routes/index.routes';
+//import CategoriesRoutes from './routes/categories.routes';
+//import UsersRoutes from './routes/users.routes';
 class App {
     constructor(port) {
         this.port = port;
@@ -57,9 +57,9 @@ class App {
         this.app.use(cors_1.default());
     }
     routes() {
-        this.app.use(index_routes_1.default);
-        this.app.use('/categories', categories_routes_1.default);
-        this.app.use('/users', users_routes_1.default);
+        //this.app.use(IndexRoutes);
+        //this.app.use('/categories', CategoriesRoutes);
+        //this.app.use('/users', UsersRoutes);
     }
     listen() {
         return __awaiter(this, void 0, void 0, function* () {
