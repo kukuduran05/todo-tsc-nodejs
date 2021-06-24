@@ -8,9 +8,7 @@ import bodyParser from 'body-parser';
 dotenv.config();
 
 // Routes
-import { authRouter} from "./routes/index.routes";
-//import UsersRoutes from './routes/users.routes';
-//import CategoryRoutes from './routes/categories.routes';
+import IndexRoutes from './routes/index.routes'
 
 const app = express();
 const PORT: number = parseInt(process.env.PORT as string, 10);
@@ -23,9 +21,7 @@ app.use(express.json());
 app.use(cors());
 
 // Api routes
-app.use('/auth', authRouter);
-//app.use('/users', UsersRoutes);
-//app.use('/categories', CategoryRoutes);
+app.use(IndexRoutes);
 
 // Start the Express server
 app.listen(PORT, () => {
