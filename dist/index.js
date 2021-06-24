@@ -26,25 +26,19 @@ const express_1 = __importStar(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
-const body_parser_1 = __importDefault(require("body-parser"));
 // Initialize configuration
 dotenv.config();
 // Routes
-const index_routes_1 = require("./routes/index.routes");
-//import UsersRoutes from './routes/users.routes';
-//import CategoryRoutes from './routes/categories.routes';
+const index_routes_1 = __importDefault(require("./routes/index.routes"));
 const app = express_1.default();
 const PORT = parseInt(process.env.PORT, 10);
 // Middlewares
 app.use(morgan_1.default('dev'));
 app.use(express_1.urlencoded({ extended: false }));
-app.use(body_parser_1.default.json());
 app.use(express_1.default.json());
 app.use(cors_1.default());
 // Api routes
-app.use('/auth', index_routes_1.authRouter);
-//app.use('/users', UsersRoutes);
-//app.use('/categories', CategoryRoutes);
+app.use(index_routes_1.default);
 // Start the Express server
 app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);

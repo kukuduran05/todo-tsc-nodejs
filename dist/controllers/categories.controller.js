@@ -1,75 +1,48 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-// DB
-/*
-import { connect } from '../database'
-//Interfaces
-//import { Category } from '../models/Categories';
-
-export async function listCategories(req: Request, res: Response): Promise<Response | void> {
-    try {
-        /*const conn = await connect();
-        const cats = await conn.query('SELECT * FROM categories');
-        return res.json(cats[0]);
-        res.json({
-            message: 'Category list'
-        });
-        console.log("categories list");
-    }
-    catch (e) {
-        console.log(e)
-    }
+exports.updateCategory = exports.deleteCategory = exports.getOneCategory = exports.getAllCategories = exports.createCategory = void 0;
+function createCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for create category
+        return res.json('Create category');
+    });
 }
-
-export async function createCategory(req: Request, res: Response) {
-    /*const newCat: Category = req.body;
-    const conn = await connect();
-    await conn.query('INSERT INTO categories SET ?', [newCat]);
-    res.json({
-        message: 'New Category Created'
+exports.createCategory = createCategory;
+function getAllCategories(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for get all categories
+        return res.json('Get all categories');
     });
-    res.json({
-        message: 'category created'
-    });
-    console.log("new category");
 }
-
-export async function getCategory(req: Request, res: Response) {
-    /*const id = req.params.categoryId;
-    const conn = await connect();
-    const cats = await conn.query('SELECT * FROM categories WHERE id = ?', [id]);
-    res.json(cats[0]);
-    res.json({
-        message: 'get one category'
+exports.getAllCategories = getAllCategories;
+function getOneCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for get a specific category
+        return res.json('Get only one category');
     });
-    console.log("get category");
-    
 }
-
-export async function deleteCategory(req: Request, res: Response) {
-    /*const id = req.params.categoryId;
-    const conn = await connect();
-    await conn.query('DELETE FROM categories WHERE id = ?', [id]);
-    res.json({
-        message: 'Category deleted'
+exports.getOneCategory = getOneCategory;
+function deleteCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for delete a specific category
+        return res.json('Delete category');
     });
-    res.json({
-        message: 'Category deleted'
-    });
-    console.log("delete category");
 }
-
-export async function updateCategory(req: Request, res: Response) {
-    /*const id = req.params.categoryId;
-    const updatePost: Category = req.body;
-    const conn = await connect();
-    await conn.query('UPDATE categories set ? WHERE id = ?', [updatePost, id]);
-    res.json({
-        message: 'Category Updated'
+exports.deleteCategory = deleteCategory;
+function updateCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for delete a specific category
+        return res.json('Update category');
     });
-    console.log("update category");
-    res.json({
-        message: 'Category Updated'
-    });
-}*/ 
+}
+exports.updateCategory = updateCategory;
 //# sourceMappingURL=categories.controller.js.map

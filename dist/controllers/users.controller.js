@@ -1,73 +1,41 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-// DB
-//import { connect } from '../database'
-//Interfaces
-//import { User } from '../models/Users';
-//export async function listUsers(req: Request, res: Response) {
-//try {
-/*
-const conn = await connect();
-const users = await conn.query('SELECT * FROM users', function(error, results, fields){
-    if (error) {
-        throw error;
-    }
-    console.log(results);
-});
-conn.end(); */
-/*const sql = `SELECT * FROM users`;
-const users = conn.query(sql, function (err, result) {
-    if (err) throw err;
-    return result;
-});
-console.log(users);*/
-/*}
-catch (e) {
-    console.log(e)
-}*/
-//}
-/*
-export async function createUser(req: Request, res: Response) {
-    /*const newUser: User = req.body;
-    const conn = await connect();
-    await conn.query('INSERT INTO users SET ?', [newUser]);
-    res.json({
-        message: 'New User Created'
+exports.updateUser = exports.deleteUser = exports.getOneUser = exports.getAllUsers = void 0;
+function getAllUsers(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for get all users
+        return res.json('Get all users');
     });
 }
-
-export async function getUser(req: Request, res: Response) {
-    /*const id = req.params.userId;
-    const conn = await connect();
-    const users = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
-    res.json(users[0]);
-    res.json({
-        message: 'get one user'
+exports.getAllUsers = getAllUsers;
+function getOneUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for get a specific user
+        return res.json('Get only one user');
     });
 }
-
-export async function deleteUser(req: Request, res: Response) {
-    /*const id = req.params.userId;
-    const conn = await connect();
-    await conn.query('DELETE FROM users WHERE id = ?', [id]);
-    res.json({
-        message: 'User deleted'
-    });
-    res.json({
-        message: 'User deleted'
+exports.getOneUser = getOneUser;
+function deleteUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for delete a specific user
+        return res.json('Delete user');
     });
 }
-
-export async function updateUser(req: Request, res: Response) {
-    /*const id = req.params.userId;
-    const updatePost: User = req.body;
-    const conn = await connect();
-    await conn.query('UPDATE users set ? WHERE id = ?', [updatePost, id]);
-    res.json({
-        message: 'User Updated'
+exports.deleteUser = deleteUser;
+function updateUser(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO code for delete a specific user
+        return res.json('Update user');
     });
-    res.json({
-        message: 'User updated'
-    });
-}*/ 
+}
+exports.updateUser = updateUser;
 //# sourceMappingURL=users.controller.js.map
