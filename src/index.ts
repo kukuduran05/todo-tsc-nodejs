@@ -7,7 +7,7 @@ import cors from 'cors';
 dotenv.config();
 
 // Routes
-import IndexRoutes from './routes/index.routes'
+import IndexRoutes from './routes/index.routes';
 
 const app = express();
 const PORT: number = parseInt(process.env.PORT as string, 10);

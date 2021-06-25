@@ -1,30 +1,23 @@
 import { User } from "../types/users";
-import { db } from "../database";
-import { OkPacket, RowDataPacket} from "mysql2";
+import MySQL from "../services/database";
+import { RowDataPacket } from "mysql2";
 
-
-export const create = (user: User, callback: Function) => {
-    const queryString = "INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)"
-    db.query(
-      queryString,
-      [user.name, user.lastname, user.email, user.password],
-      (err, result) => {
-        if (err) {callback(err)};
-        const insertId = (<OkPacket> result).insertId;
-        callback(null, insertId);
-      }
-    );
-};
-
-export const existUser = (email: string, callback: Function) => {
-    const queryString = `SELECT * FROM users WHERE email=?`;
-    var data = "";
-    db.query(queryString, email, (err, result) => {
-        if (err) {callback(err)}
-        const row = (<RowDataPacket> result)[0];
-        if(row){
-            data = row.email;
-        } 
-        callback(null, data);
+/* export const create = (user: User, callback: Function) => {
+    const query = `INSERT INTO users (name, lastname, email, password) 
+      VALUES (${MySQL.escape(user.name)}, ${MySQL.escape(user.lastname)}, ${MySQL.escape(user.email)}, ${MySQL.escape(user.password)})`
+    MySQL.query(query, (err: Error, results:Object[]) => {
+      if (err) {callback(err)}
+      const user = (<RowDataPacket> results);
+      callback(null, results);  
     });
-  }
+}; */
+
+export function existUser(email: string, callback: Function) {
+  const query = `SELECT * FROM users WHERE email = ${MySQL.escape(email)}`;
+  MySQL.query(query, (err: Error, results:any) => {
+    if (err) {callback(err)}
+    const user = (<RowDataPacket> results[0]);
+    console.log(results[0].userId);
+    callback(null, user);
+  });
+}
