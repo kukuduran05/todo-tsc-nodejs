@@ -27,17 +27,8 @@ CREATE TABLE `tasks` (
   `title` varchar(100) NOT NULL DEFAULT '',
   `description` text,
   `userId` int DEFAULT NULL,
+  `categories` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`taskId`),
   KEY `fk_users_tasks_idx` (`userId`),
   CONSTRAINT `fk_users_tasks` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-DROP TABLE IF EXISTS `cat_tasks`;
-CREATE TABLE `cat_tasks` (
-  `categoryId` int NOT NULL,
-  `taskId` int NOT NULL,
-  PRIMARY KEY (`categoryId`,`taskId`),
-  KEY `fk_task_task_idx` (`taskId`),
-  CONSTRAINT `fk_task_categories` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`categoryId`),
-  CONSTRAINT `fk_task_task` FOREIGN KEY (`taskId`) REFERENCES `tasks` (`taskId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
