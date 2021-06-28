@@ -12,7 +12,7 @@ import { RowDataPacket } from "mysql2";
     });
 }; */
 
-export function existUser(email: string, callback: Function) {
+/*export function existUser(email: string, callback: Function) {
   const query = `SELECT * FROM users WHERE email = ${MySQL.escape(email)}`;
   MySQL.query(query, (err: Error, results:any) => {
     if (err) {callback(err)}
@@ -20,4 +20,4 @@ export function existUser(email: string, callback: Function) {
     console.log(results[0].userId);
     callback(null, user);
   });
-}
+}*/
