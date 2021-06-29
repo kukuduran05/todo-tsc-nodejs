@@ -2,7 +2,7 @@ import express, { urlencoded } from 'express';
 import * as dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
-import { errorHandler } from './helpers/handle_errors';
+import { errorMiddleware } from './middleware/error';
 
 // Initialize configuration
 dotenv.config();
@@ -22,7 +22,7 @@ app.use(cors());
 // Api routes
 app.use(IndexRoutes);
 
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 // Start the Express server
 app.listen(PORT, () => {
