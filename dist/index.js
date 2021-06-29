@@ -26,6 +26,7 @@ const express_1 = __importStar(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
+const error_1 = require("./middleware/error");
 // Initialize configuration
 dotenv.config();
 // Routes
@@ -39,6 +40,7 @@ app.use(express_1.default.json());
 app.use(cors_1.default());
 // Api routes
 app.use(index_routes_1.default);
+app.use(error_1.errorMiddleware);
 // Start the Express server
 app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);

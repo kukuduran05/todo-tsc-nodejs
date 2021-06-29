@@ -2,12 +2,13 @@ import express, { urlencoded } from 'express';
 import * as dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
+import { errorMiddleware } from './middleware/error';
 
 // Initialize configuration
 dotenv.config();
 
 // Routes
-import IndexRoutes from './routes/index.routes'
+import IndexRoutes from './routes/index.routes';
 
 const app = express();
 const PORT: number = parseInt(process.env.PORT as string, 10);
@@ -20,6 +21,8 @@ app.use(cors());
 
 // Api routes
 app.use(IndexRoutes);
+
+app.use(errorMiddleware);
 
 // Start the Express server
 app.listen(PORT, () => {
