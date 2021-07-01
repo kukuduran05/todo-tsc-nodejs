@@ -1,59 +1,66 @@
-import express, { NextFunction, Request, Response } from "express";
-import MySQL from './database';
 import { RowDataPacket } from "mysql2";
-import { errorMiddleware, successfullMiddleware} from '../middleware/error';
+import { conn } from '../services/database';
 
-export function findAll(table: string, req: Request, res: Response, next: NextFunction) {
-    try {
-        const query = `SELECT * FROM ${table}`;
-        MySQL.query(query, (err: Error, results: any) => {
-            if (err) {console.log(err)}
-            const list = (<RowDataPacket> results);
-            if (list){
-                const data = {
-                    data: list
-                }
-                successfullMiddleware(data, req, res, next);
-            } else {
-                const data = {
-                    data: []
-                }
-                successfullMiddleware(data, req, res, next);
-            }
+export function save(query: string, values: any) {
+    return new Promise((resolve, reject) => {
+        conn.query(query, values, function(err, data, fields) {
+            if (err) { reject(err) };
+            const recordNew = (<RowDataPacket> data);
+            resolve(recordNew);
         });
-    } catch (error) {
-        errorMiddleware(error, req, res, next);
-    }
+    });
 }
 
-export function findOne(data: any, req: Request, res: Response, next: NextFunction) {
-    try {
-        const query = `SELECT * FROM ${data.table} WHERE ${data.field} = ${data.id}`;
-        MySQL.query(query, (err: Error, results: any) => {
-            if (err) {console.log(err)}
-            const info = (<RowDataPacket> results);
-            const data = {
-                data: info
-            }
-            successfullMiddleware(data, req, res, next);
+export async function findAll(table: string) {
+    const query = `SELECT * FROM ${table}`;
+    return new Promise((resolve, reject)=>{
+        conn.query(query, function(err, data, fields) {
+            if (err) { reject(err) };
+            const getAllRecords = (<RowDataPacket> data);
+            resolve(getAllRecords);
         });
-    } catch (error) {
-        errorMiddleware(error, req, res, next);
-    }
+    });
 }
 
-export function deleteRecord(data: any, req: Request, res: Response, next: NextFunction) {
-    try{
-        const query = `DELETE FROM ${data.table} WHERE ${data.field} = ${data.id}`;
-        MySQL.query(query, (err: Error, results: any) => {
-            if (err) {console.log(err)}
-            //const userDeleted = (<RowDataPacket> results);
-            const info = {
-                data: `The record with Id ${data.id} in table ${data.table} was deleted successfully!`
-            }
-            successfullMiddleware(info, req, res, next);
+
+export function findOne(table: string, field: string, id: number) {
+    const query = `SELECT * FROM ${table} WHERE ${field} = ${id}`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, function(err, data, fields) {
+            if (err) {reject(err)}
+            const getRecord = (<RowDataPacket> data);
+            resolve(getRecord);
         });
-    } catch(error) {
-        errorMiddleware(error, req, res, next);
-    }
+    });
+}
+
+export function findByEmail(query: any) {
+    return new Promise((resolve, reject) => {
+        conn.query(query, function(err, data, fields) {
+            if (err) { reject(err) };
+            const getRecord = (<RowDataPacket> data);
+            resolve(getRecord);
+        });
+    });
+}
+
+export function updateRecord(query: any, values: any) {
+    return new Promise((resolve, reject) => {
+        conn.query(query, values, function(err, data, fields) {
+            if (err) { reject(err) };
+            const updatedRecord = (<RowDataPacket> data);
+            resolve(updatedRecord);
+        });
+    });
+}
+
+export function deleteRecord(table: string, field: string, id: number) {
+    const query = `DELETE FROM ${table} WHERE ${field} = ${id}`;
+    return new Promise((resolve, reject) => {
+        conn.query(query, function(err, data, fields) {
+            if (err) { reject(err) };
+            const updatedRecord = (<RowDataPacket> data);
+            resolve(updatedRecord);
+        });
+    });
 }
