@@ -8,7 +8,7 @@ export function validationHandler(schema: any, check:any='body'){
             next();
         }
         catch (err) {
-            res.send(Boom.badRequest(err.message));
+            next(Boom.badRequest(err.message));
         }
     };
 }

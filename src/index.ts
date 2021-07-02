@@ -2,7 +2,9 @@ import express, { urlencoded } from 'express';
 import * as dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
-import { validationHandler } from './middleware/validationHandler';
+import { errorHandler } from './middleware/errorHandlers';
+import { notFoundHandler } from './middleware/notFoundHandler';
+
 // Initialize configuration
 dotenv.config();
 
@@ -21,8 +23,13 @@ app.use(cors());
 // Api routes
 app.use(IndexRoutes);
 
+// Catch 404
+app.use(notFoundHandler);
+
 // Errors
-app.use(validationHandler);
+app.use(errorHandler);
+
+
 // Start the Express server
 app.listen(PORT, () => {
     console.log( `Server started at http://localhost:${ PORT }` );

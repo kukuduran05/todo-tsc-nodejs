@@ -1,66 +1,91 @@
-import { RowDataPacket } from "mysql2";
-import { conn } from '../services/database';
+import { OkPacket, RowDataPacket } from 'mysql';
+import { connect } from './database';
 
-export function save(query: string, values: any) {
-    return new Promise((resolve, reject) => {
-        conn.query(query, values, function(err, data, fields) {
-            if (err) { reject(err) };
-            const recordNew = (<RowDataPacket> data);
-            resolve(recordNew);
+export const save = (table: string, fields: any, values: any) => new Promise((resolve, reject) => {
+    connect.getConnection((err, connection) => {
+        connection.release();
+        if (err) reject(err);
+        console.log('MySQL Connection Established: ', connection.threadId);
+        // Generate Query
+        var query = `INSERT INTO ${table} (${fields}) VALUES (?)`;
+        connection.query(query, [values], (err, results) => {
+            if (err) reject(err);
+            // TODO get inserted values
+            resolve(results);
         });
-    });
+    })
+});
+
+export const findAll = (table: string, fields = []) => new Promise((resolve, reject) => {
+    connect.getConnection((err, connection) => {
+        if (err) reject(err);
+        console.log('MySQL Connection Established: ', connection.threadId);
+        // Generate Query
+        var query = `SELECT `;
+        fields.length != 0 ? query = query + fields.join() + ' ' : query = query + ' * ';
+        query = query + `FROM ${table}`;
+        // Execute Query
+        connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    })
+});
+
+export const findOne = (table: string, field: string, fieldValue: any, fields = []) => new Promise((resolve, reject) => {
+    connect.getConnection((err, connection) => {
+        if (err) reject(err);
+        console.log('MySQL Connection Established: ', connection.threadId);
+        // Generate Query
+        var query = `SELECT `;
+        fields.length != 0 ? query = query + fields.join() + ' ' : query = query + ' * ';
+        query = query + `FROM ${table} WHERE ${field} = '${fieldValue}'`;
+        // Execute Query
+        connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    })
+});
+
+export const updateRecord = (table: string, field:string, keys: any, values: any, id: number) => new Promise((resolve, reject) => {
+    connect.getConnection((err, connection) => {
+        if (err) reject(err);
+        console.log('MySQL Connection Established: ', connection.threadId);
+        // GENERATE QUERY
+        var query = `UPDATE ${table} SET `;
+        let vals = [];
+        for (let i = 0; i < keys.length; i++) {
+            vals.push(keys[i] + '=' + `'${values[i]}'`);
+        }
+        query = query + `${vals} WHERE ${field} = ${id}`;
+        console.log(query);
+        //const query = `SELECT * FROM ${table} WHERE ${field} = ${id}`;
+        connection.query(query, values, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    })
+});
+
+export function userExist(user: any) {
+    if (user == 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
-export async function findAll(table: string) {
-    const query = `SELECT * FROM ${table}`;
-    return new Promise((resolve, reject)=>{
-        conn.query(query, function(err, data, fields) {
-            if (err) { reject(err) };
-            const getAllRecords = (<RowDataPacket> data);
-            resolve(getAllRecords);
+export const deleteRecord = (table: string, field: string, id: number) => new Promise((resolve, reject) => {
+    connect.getConnection((err, connection) => {
+        if (err) reject(err);
+        console.log('MySQL Connection Established: ', connection.threadId);
+        // Generate Query
+        const query = `DELETE FROM ${table} WHERE ${field} = ${id}`;
+        // Execute Query
+        connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
         });
-    });
-}
-
-
-export function findOne(table: string, field: string, id: number) {
-    const query = `SELECT * FROM ${table} WHERE ${field} = ${id}`;
-    return new Promise((resolve, reject) => {
-        conn.query(query, function(err, data, fields) {
-            if (err) {reject(err)}
-            const getRecord = (<RowDataPacket> data);
-            resolve(getRecord);
-        });
-    });
-}
-
-export function findByEmail(query: any) {
-    return new Promise((resolve, reject) => {
-        conn.query(query, function(err, data, fields) {
-            if (err) { reject(err) };
-            const getRecord = (<RowDataPacket> data);
-            resolve(getRecord);
-        });
-    });
-}
-
-export function updateRecord(query: any, values: any) {
-    return new Promise((resolve, reject) => {
-        conn.query(query, values, function(err, data, fields) {
-            if (err) { reject(err) };
-            const updatedRecord = (<RowDataPacket> data);
-            resolve(updatedRecord);
-        });
-    });
-}
-
-export function deleteRecord(table: string, field: string, id: number) {
-    const query = `DELETE FROM ${table} WHERE ${field} = ${id}`;
-    return new Promise((resolve, reject) => {
-        conn.query(query, function(err, data, fields) {
-            if (err) { reject(err) };
-            const updatedRecord = (<RowDataPacket> data);
-            resolve(updatedRecord);
-        });
-    });
-}
+    })
+});
