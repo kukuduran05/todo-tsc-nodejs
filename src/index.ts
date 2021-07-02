@@ -2,6 +2,7 @@ import express, { urlencoded } from 'express';
 import * as dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
+import helmet from 'helmet';
 import { errorHandler } from './middleware/errorHandlers';
 import { notFoundHandler } from './middleware/notFoundHandler';
 
@@ -18,6 +19,7 @@ const PORT: number = parseInt(process.env.PORT as string, 10);
 app.use(morgan('dev'));
 app.use(urlencoded({extended: false}));
 app.use(express.json());
+app.use(helmet());
 app.use(cors());
 
 // Api routes

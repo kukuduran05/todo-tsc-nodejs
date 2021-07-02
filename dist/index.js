@@ -26,6 +26,7 @@ const express_1 = __importStar(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
+const helmet_1 = __importDefault(require("helmet"));
 const errorHandlers_1 = require("./middleware/errorHandlers");
 const notFoundHandler_1 = require("./middleware/notFoundHandler");
 // Initialize configuration
@@ -38,6 +39,7 @@ const PORT = parseInt(process.env.PORT, 10);
 app.use(morgan_1.default('dev'));
 app.use(express_1.urlencoded({ extended: false }));
 app.use(express_1.default.json());
+app.use(helmet_1.default());
 app.use(cors_1.default());
 // Api routes
 app.use(index_routes_1.default);
