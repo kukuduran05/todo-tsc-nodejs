@@ -26,7 +26,8 @@ const express_1 = __importStar(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
-const error_1 = require("./middleware/error");
+const errorHandlers_1 = require("./middleware/errorHandlers");
+const notFoundHandler_1 = require("./middleware/notFoundHandler");
 // Initialize configuration
 dotenv.config();
 // Routes
@@ -40,7 +41,10 @@ app.use(express_1.default.json());
 app.use(cors_1.default());
 // Api routes
 app.use(index_routes_1.default);
-app.use(error_1.errorMiddleware);
+// Catch 404
+app.use(notFoundHandler_1.notFoundHandler);
+// Errors
+app.use(errorHandlers_1.errorHandler);
 // Start the Express server
 app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);
