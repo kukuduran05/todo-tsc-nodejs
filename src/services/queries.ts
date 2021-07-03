@@ -1,5 +1,6 @@
-import { OkPacket, RowDataPacket } from 'mysql';
 import { connect } from './database';
+import Jwt from "jsonwebtoken";
+import { RowDataPacket } from "mysql";
 
 export const save = (table: string, fields: any, values: any) => new Promise((resolve, reject) => {
     connect.getConnection((err, connection) => {
@@ -59,22 +60,12 @@ export const updateRecord = (table: string, field:string, keys: any, values: any
             vals.push(keys[i] + '=' + `'${values[i]}'`);
         }
         query = query + `${vals} WHERE ${field} = ${id}`;
-        console.log(query);
-        //const query = `SELECT * FROM ${table} WHERE ${field} = ${id}`;
         connection.query(query, values, (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
     })
 });
-
-export function userExist(user: any) {
-    if (user == 0) {
-        return false;
-    } else {
-        return true;
-    }
-}
 
 export const deleteRecord = (table: string, field: string, id: number) => new Promise((resolve, reject) => {
     connect.getConnection((err, connection) => {
@@ -89,3 +80,16 @@ export const deleteRecord = (table: string, field: string, id: number) => new Pr
         });
     })
 });
+
+export async function getCurrentUser(req: any) {
+    const token = req.header('auth-token');
+    var secret: any = process.env.TOKEN_SECRET;
+    const currentUser:any = Jwt.decode(token, secret);
+    const user = await findOne('users', 'email', currentUser.email);
+    let userData = (<RowDataPacket> user);
+    let userInfo = {
+        userId: userData[0].userId,
+        email: userData[0].email
+    }
+    return userInfo;
+}
