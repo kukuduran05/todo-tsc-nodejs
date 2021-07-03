@@ -71,3 +71,8 @@ authRouter.post("/login", validationHandler(loginUserSchema), async(req: Request
         next(Boom.badRequest('Password incorrect!'));
     }
 });
+
+authRouter.post("/logout", async(req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('auth-token', ['Authorization=;Max-age=0']);
+    res.send(200);
+});
