@@ -16,7 +16,7 @@ const table = 'users';
 authRouter.post("/register", validationHandler(createUserSchema), async(req: Request, res: Response, next: NextFunction) => {
     // Check if the user is on the DB
     const isEmailExist: any = await Service.findOne(table, 'email', req.body.email);
-    if (isEmailExist) {
+    if (isEmailExist.length > 0) {
         return res.json({
             message: "Username already exists!"
         });
@@ -43,7 +43,7 @@ authRouter.post("/register", validationHandler(createUserSchema), async(req: Req
 authRouter.post("/login", validationHandler(loginUserSchema), async(req: Request, res: Response, next: NextFunction) => {
     // Check if the user is on the DB
     const isEmailExist: any = await Service.findOne(table, 'email', req.body.email);
-    if (isEmailExist) {
+    if (isEmailExist.length == 0) {
         return res.json({
             message: "Username does not exists!"
         })

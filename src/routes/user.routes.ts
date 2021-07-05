@@ -15,7 +15,7 @@ const table = 'users';
 userRouter.post("/", validationHandler(createUserSchema), async(req: Request, res: Response, next: NextFunction) => {
     // Check if the user is on the DB
     const isEmailExist: any = await Service.findOne(table, 'email', req.body.email);
-    if (isEmailExist) {
+    if (isEmailExist.length > 0) {
         return res.json({
             message: "Username already exists!"
         })
@@ -76,7 +76,7 @@ userRouter.put("/:idUser", validationHandler(updateUserSchema) , async(req: Requ
     // Check if the user is on the DB
     const idUser = parseInt(req.params.idUser);
     const isEmailExist: any = await Service.findOne(table, 'userId', idUser);
-    if (isEmailExist) {
+    if (isEmailExist.length == 0) {
         return res.json({
             message: "Username does not exist!"
         })
@@ -116,7 +116,7 @@ userRouter.delete("/:idUser", async(req: Request, res: Response, next: NextFunct
     // Check if the user is on the DB
     const idUser = parseInt(req.params.idUser);
     const isEmailExist: any = await Service.findOne(table, 'userId', idUser);
-    if (isEmailExist) {
+    if (isEmailExist.length == 0) {
         return res.json({
             message: "Username does not exist!"
         })
@@ -131,7 +131,7 @@ userRouter.delete("/:idUser", async(req: Request, res: Response, next: NextFunct
 function deleteUser(table: string, field: string, id: any, req: Request, res: Response, next: NextFunction){
     Service.deleteRecord(table, field, id)
     .then(user => {
-        res.json({
+        return res.json({
             message: "User deleted!"
         });
     })

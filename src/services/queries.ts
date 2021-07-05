@@ -44,6 +44,7 @@ export const findOne = (table: string, field: string, fieldValue: any, fields = 
         fields.length != 0 ? query = query + fields.join() + ' ' : query = query + ' * ';
         query = query + `FROM ${table} WHERE ${field} = '${fieldValue}'`;
         conditions != '' ? query = query + ' ' +conditions : query = query;
+        console.log(query);
         // Execute Query
         connection.query(query, (err, results) => {
             if (err) reject(err);
@@ -64,6 +65,7 @@ export const updateRecord = (table: string, field:string, keys: any, values: any
         }
         query = query + `${vals} WHERE ${field} = ${id}`;
         conditions != '' ? query = query + ' ' +conditions : query = query;
+        console.log(query);
         connection.query(query, values, (err, results) => {
             if (err) reject(err);
             resolve(results);

@@ -4,5 +4,6 @@ export interface BasicCategory {
 
 export interface Category extends BasicCategory{
     title: string,
-    description?: string
+    description?: string,
+    userId: number
 }
