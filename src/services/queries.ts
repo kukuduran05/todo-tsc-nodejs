@@ -17,7 +17,7 @@ export const save = (table: string, fields: any, values: any) => new Promise((re
     })
 });
 
-export const findAll = (table: string, fields = []) => new Promise((resolve, reject) => {
+export const findAll = (table: string, fields = [], conditions = '') => new Promise((resolve, reject) => {
     connect.getConnection((err, connection) => {
         if (err) reject(err);
         console.log('MySQL Connection Established: ', connection.threadId);
@@ -25,6 +25,8 @@ export const findAll = (table: string, fields = []) => new Promise((resolve, rej
         var query = `SELECT `;
         fields.length != 0 ? query = query + fields.join() + ' ' : query = query + ' * ';
         query = query + `FROM ${table}`;
+        conditions != '' ? query = query + ' ' +conditions : query = query;
+        console.log(query);
         // Execute Query
         connection.query(query, (err, results) => {
             if (err) reject(err);
@@ -33,7 +35,7 @@ export const findAll = (table: string, fields = []) => new Promise((resolve, rej
     })
 });
 
-export const findOne = (table: string, field: string, fieldValue: any, fields = []) => new Promise((resolve, reject) => {
+export const findOne = (table: string, field: string, fieldValue: any, fields = [], conditions = '') => new Promise((resolve, reject) => {
     connect.getConnection((err, connection) => {
         if (err) reject(err);
         console.log('MySQL Connection Established: ', connection.threadId);
@@ -41,6 +43,7 @@ export const findOne = (table: string, field: string, fieldValue: any, fields = 
         var query = `SELECT `;
         fields.length != 0 ? query = query + fields.join() + ' ' : query = query + ' * ';
         query = query + `FROM ${table} WHERE ${field} = '${fieldValue}'`;
+        conditions != '' ? query = query + ' ' +conditions : query = query;
         // Execute Query
         connection.query(query, (err, results) => {
             if (err) reject(err);
@@ -49,7 +52,7 @@ export const findOne = (table: string, field: string, fieldValue: any, fields = 
     })
 });
 
-export const updateRecord = (table: string, field:string, keys: any, values: any, id: number) => new Promise((resolve, reject) => {
+export const updateRecord = (table: string, field:string, keys: any, values: any, id: number, conditions = '') => new Promise((resolve, reject) => {
     connect.getConnection((err, connection) => {
         if (err) reject(err);
         console.log('MySQL Connection Established: ', connection.threadId);
@@ -60,6 +63,7 @@ export const updateRecord = (table: string, field:string, keys: any, values: any
             vals.push(keys[i] + '=' + `'${values[i]}'`);
         }
         query = query + `${vals} WHERE ${field} = ${id}`;
+        conditions != '' ? query = query + ' ' +conditions : query = query;
         connection.query(query, values, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -88,7 +92,7 @@ export async function getCurrentUser(req: any) {
     const user = await findOne('users', 'email', currentUser.email);
     let userData = (<RowDataPacket> user);
     let userInfo = {
-        userId: userData[0].userId,
+        id: userData[0].userId,
         email: userData[0].email
     }
     return userInfo;

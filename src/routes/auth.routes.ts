@@ -4,10 +4,8 @@ import { User } from "interfaces/users";
 import * as Service from "../services/queries";
 import Boom from "@hapi/boom";
 import { hash, match } from '../utils/hashing';
-//import bcrypt from "bcrypt";
 import { validationHandler } from '../middleware/validationHandler';
 import Jwt from "jsonwebtoken";
-import { string } from "joi";
 
 
 export const authRouter = express.Router();
@@ -18,10 +16,10 @@ const table = 'users';
 authRouter.post("/register", validationHandler(createUserSchema), async(req: Request, res: Response, next: NextFunction) => {
     // Check if the user is on the DB
     const isEmailExist: any = await Service.findOne(table, 'email', req.body.email);
-    if (isEmailExist.length > 0) {
-        res.json({
+    if (isEmailExist) {
+        return res.json({
             message: "Username already exists!"
-        })
+        });
     }
     // Get data from req.body
     const newUser: User = req.body;
@@ -37,7 +35,7 @@ authRouter.post("/register", validationHandler(createUserSchema), async(req: Req
             data: savedUser
         });
     } catch (err) {
-        next(Boom.badRequest(err.message));
+        return next(Boom.badRequest(err.message));
     }   
 });
 
@@ -45,14 +43,13 @@ authRouter.post("/register", validationHandler(createUserSchema), async(req: Req
 authRouter.post("/login", validationHandler(loginUserSchema), async(req: Request, res: Response, next: NextFunction) => {
     // Check if the user is on the DB
     const isEmailExist: any = await Service.findOne(table, 'email', req.body.email);
-    if (isEmailExist.length == 0) {
-        res.json({
+    if (isEmailExist) {
+        return res.json({
             message: "Username does not exists!"
         })
     }
     // Get data from req.body
     const user: User = req.body;
-
     let isPasswordMatching = await match(user.password, isEmailExist[0].password);
     if(isPasswordMatching == true) {
         // Create Token
@@ -68,7 +65,7 @@ authRouter.post("/login", validationHandler(loginUserSchema), async(req: Request
             data: {token}
         })
     } else {
-        next(Boom.badRequest('Password incorrect!'));
+        return next(Boom.badRequest('Password incorrect!'));
     }
 });
 

@@ -15,8 +15,8 @@ const table = 'users';
 userRouter.post("/", validationHandler(createUserSchema), async(req: Request, res: Response, next: NextFunction) => {
     // Check if the user is on the DB
     const isEmailExist: any = await Service.findOne(table, 'email', req.body.email);
-    if (isEmailExist.length > 0) {
-        res.json({
+    if (isEmailExist) {
+        return res.json({
             message: "Username already exists!"
         })
     }
@@ -34,7 +34,7 @@ userRouter.post("/", validationHandler(createUserSchema), async(req: Request, re
             data: savedUser
         });
     } catch (err) {
-        next(Boom.badRequest(err.message));
+        return next(Boom.badRequest(err.message));
     }
 });
 
@@ -46,9 +46,12 @@ userRouter.get("/", async(req: Request, res: Response, next: NextFunction) => {
         'lastname',
         'email'
     ];
-    await Service.findAll(table, fields)
-    .then(userList => res.send(userList))
-    .catch(err => next(Boom.badRequest(err.message)));
+    try {
+        const users = await Service.findAll(table, fields);
+        res.json(users);
+    } catch (err){
+        return next(Boom.badRequest(err.message));
+    }
 });
 
 // Get one user
@@ -60,9 +63,12 @@ userRouter.get("/:idUser", async(req: Request, res: Response, next: NextFunction
         'lastname',
         'email'
     ];
-    await Service.findOne(table, 'userId', idUser, fields)
-    .then(user => res.send(user))
-    .catch(err => next(Boom.badRequest(err.message)));
+    try {
+        const user = await Service.findOne(table, 'userId', idUser, fields);
+        res.json(user);
+    } catch (err){
+        return next(Boom.badRequest(err.message));
+    }
 });
 
 // Update User
@@ -70,8 +76,8 @@ userRouter.put("/:idUser", validationHandler(updateUserSchema) , async(req: Requ
     // Check if the user is on the DB
     const idUser = parseInt(req.params.idUser);
     const isEmailExist: any = await Service.findOne(table, 'userId', idUser);
-    if (isEmailExist.length == 0) {
-        res.json({
+    if (isEmailExist) {
+        return res.json({
             message: "Username does not exist!"
         })
     }
@@ -100,7 +106,7 @@ userRouter.put("/:idUser", validationHandler(updateUserSchema) , async(req: Requ
             })
         })
     } catch(err) {
-        next(Boom.badRequest(err.message));
+        return next(Boom.badRequest(err.message));
     }
 
 });
@@ -110,15 +116,15 @@ userRouter.delete("/:idUser", async(req: Request, res: Response, next: NextFunct
     // Check if the user is on the DB
     const idUser = parseInt(req.params.idUser);
     const isEmailExist: any = await Service.findOne(table, 'userId', idUser);
-    if (isEmailExist.length == 0) {
-        res.json({
+    if (isEmailExist) {
+        return res.json({
             message: "Username does not exist!"
         })
     }
     try {
         deleteUser(table, 'userId', idUser, req, res, next);
     } catch (err) {
-        next(Boom.badRequest(err.message));
+        return next(Boom.badRequest(err.message));
     }
 });
 
