@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandlers';
 import { notFoundHandler } from './middleware/notFoundHandler';
+import { createConnection } from 'typeorm';
+import 'reflect-metadata';
 
 // Initialize configuration
 dotenv.config();
@@ -12,6 +14,7 @@ dotenv.config();
 import IndexRoutes from './routes/index.routes';
 
 const app = express();
+createConnection();
 const PORT: number = parseInt(process.env.PORT as string, 10);
 
 // Middlewares
