@@ -28,11 +28,14 @@ const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const errorHandlers_1 = require("./middleware/errorHandlers");
 const notFoundHandler_1 = require("./middleware/notFoundHandler");
+const typeorm_1 = require("typeorm");
+require("reflect-metadata");
 // Initialize configuration
 dotenv.config();
 // Routes
 const index_routes_1 = __importDefault(require("./routes/index.routes"));
 const app = express_1.default();
+typeorm_1.createConnection();
 const PORT = parseInt(process.env.PORT, 10);
 // Middlewares
 app.use(morgan_1.default('dev'));

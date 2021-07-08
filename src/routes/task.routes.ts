@@ -1,33 +1,17 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { validationHandler } from "../middleware/validationHandler";
+import { createTaskSchema, updateTaskSchema} from "../utils/schemas/tasks";
+import * as Tasks from '../controllers/task.controller';
 
 export const taskRouter = express.Router();
 
 // New Task
-taskRouter.post("/", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Create Task');
-});
-
+taskRouter.post("/", validationHandler(createTaskSchema), Tasks.createTask);
 // Get All Tasks
-taskRouter.get("/", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Tasks List');
-});
-
+taskRouter.get("/", Tasks.getTasks);
 // Get one Task
-taskRouter.get("/:idTask", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Get one Task');
-});
-
+taskRouter.get("/:idTask", Tasks.getTask);
 // Update Task
-taskRouter.put("/:idTask", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Update Task');
-});
-
+taskRouter.put("/:idTask", validationHandler(updateTaskSchema) , Tasks.updateTask);
 // Delete Task
-taskRouter.delete("/:idTask", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Delete Task');
-});
+taskRouter.delete("/:idTask", Tasks.deleteTask);

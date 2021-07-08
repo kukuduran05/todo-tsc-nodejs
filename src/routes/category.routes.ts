@@ -1,33 +1,17 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { validationHandler } from "../middleware/validationHandler";
+import { createCategorySchema, updateCategorySchema } from '../utils/schemas/categories';
+import * as Categories from '../controllers/category.controller';
 
 export const categoryRouter = express.Router();
 
-// New User
-categoryRouter.post("/", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Create Category');
-});
-
+// New Category
+categoryRouter.post("/", validationHandler(createCategorySchema), Categories.createCategory);
 // Get All Categories
-categoryRouter.get("/", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Categories List');
-});
-
+categoryRouter.get("/", Categories.getCategories);
 // Get one Category
-categoryRouter.get("/:idCategory", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Get one Category');
-});
-
+categoryRouter.get("/:idCategory", Categories.getCategory);
 // Update Category
-categoryRouter.put("/:idCategory", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Update Category');
-});
-
+categoryRouter.put("/:idCategory", validationHandler(updateCategorySchema) , Categories.updateCategory);
 // Delete Category
-categoryRouter.delete("/:idCategory", async(req: Request, res: Response) => {
-    // TODO aqui va el modelo
-    res.json('Delete Category');
-});
+categoryRouter.delete("/:idCategory", Categories.deleteCategory);

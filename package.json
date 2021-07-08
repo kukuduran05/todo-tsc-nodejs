@@ -13,15 +13,14 @@
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
-    "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.10",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.12",
+    "@types/express-jwt": "^0.0.42",
     "@types/hapi__joi": "^17.1.6",
     "@types/morgan": "^1.9.2",
     "@types/mysql": "^2.0.0",
-    "@types/mysql2": "github:types/mysql2",
-    "@types/node": "^15.12.4",
+    "@types/node": "^15.14.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.7",
     "tsc-watch": "^4.4.0",
@@ -36,10 +35,11 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-joi-validation": "^5.0.0",
-    "express-jwt": "^6.0.0",
     "hapi": "^18.1.0",
     "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
-    "mysql2": "^2.2.5"
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.34"
   }
 }
