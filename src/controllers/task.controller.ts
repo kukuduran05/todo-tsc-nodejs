@@ -6,7 +6,7 @@ import { Tasks } from '../entity/tasks';
 export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const tasks = await getRepository(Tasks).find({
-            select: ['taskId', 'title', 'description'],
+            select: ['taskId', 'title', 'description', 'categories'],
             where: { 'userUserId': req.user.id }
         });
         return res.json(tasks);
@@ -19,7 +19,7 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction) 
 export const getTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
         const task = await getRepository(Tasks).findOne({
-            select: ['taskId', 'title', 'description'],
+            select: ['taskId', 'title', 'description', 'categories'],
             where: { 'userUserId': req.user.id, 'taskId': req.params.idTask }
         });
         return res.json(task);

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { getRepository } from 'typeorm';
-import { hash } from '../utils/hashing';
 import { Users } from '../entity/users';
 import Boom from '@hapi/boom';
 
@@ -35,9 +34,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
             newUser.name = req.body.name;
             newUser.lastname = req.body.lastname;
             newUser.email = req.body.email;
-            // Encripting password
-            const pass = await hash(req.body.password);
-            newUser.password = pass;
+            newUser.password = req.body.password;
             const userData = getRepository(Users).create(newUser);
             const results = await getRepository(Users).save(userData);
             return res.json(results);
@@ -53,10 +50,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         const user = await getRepository(Users).findOne(req.params.idUser);
         if (user) {
           const userData = getRepository(Users).merge(user, req.body);
-          // Encripting password
-          const pass = await hash(userData.password);
-          userData.password = pass;
-          const results = await getRepository(Users).save(user);
+          const results = await getRepository(Users).save(userData);
           return res.json(results);
         }
         return res.json({msg: 'User not found!'});

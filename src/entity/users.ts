@@ -1,4 +1,5 @@
-import {Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany, BeforeInsert, BeforeUpdate} from 'typeorm';
+import { hash } from '../utils/hashing';
 import { Categories } from './categories';
 import { Tasks } from './tasks';
 
@@ -24,4 +25,10 @@ export class Users {
 
     @OneToMany(() => Tasks, task => task.user)
     tasks: Tasks[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    async generatePasswordHash(): Promise<void> {
+        this.password = await hash(this.password);
+    }
 }
