@@ -33,9 +33,6 @@ export const getCategory = async (req: Request, res: Response, next: NextFunctio
 export const createCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Check if the category is on the DB
-        // const category = await getRepository(Categories).findOne({
-        //     where: { 'title': req.body.title }
-        // });
         const category = await getRepository(Categories).findOne({
             where: { 'userUserId': req.user.id, 'title': req.body.title }
         });
