@@ -1,12 +1,16 @@
 import Boom from '@hapi/boom';
+import { Categories } from '../entity/categories';
 import { NextFunction, Request, Response } from 'express';
-import { getRepository } from 'typeorm';
+import { getRepository, In } from 'typeorm';
 import { Tasks } from '../entity/tasks';
+
 
 export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tasks = await getRepository(Tasks).find({
-            select: ['taskId', 'title', 'description', 'categories'],
+        const taskRepository = getRepository(Tasks);
+        const tasks = await taskRepository.find({
+            select: ['taskId', 'title', 'description'],
+            relations: ['categories'],
             where: { 'userUserId': req.user.id }
         });
         return res.json(tasks);
@@ -18,9 +22,12 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction) 
 
 export const getTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
-        const task = await getRepository(Tasks).findOne({
-            select: ['taskId', 'title', 'description', 'categories'],
-            where: { 'userUserId': req.user.id, 'taskId': req.params.idTask }
+        const taskRepository = getRepository(Tasks);
+        const { idTask } = req.params;
+        const task = await taskRepository.findOne({
+            select: ['taskId', 'title', 'description'],
+            relations: ['categories'],
+            where: { 'userUserId': req.user.id, 'taskId': idTask }
         });
         return res.json(task);
     } catch(err) {
@@ -32,19 +39,25 @@ export const getTask = async (req: Request, res: Response, next: NextFunction)=>
 export const createTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
         // Check if the task is on the DB
-        const task = await getRepository(Tasks).findOne({
-            where: { 'userUserId': req.user.id, 'title': req.body.title }
+        const { title, description, categories } = req.body;
+        const taskRepository = getRepository(Tasks);
+        const categoryRepository = getRepository(Categories);
+        const task = await taskRepository.findOne({
+            where: { 'userUserId': req.user.id, 'title': title }
         });
     
         if (task === undefined) {
             let newTask = new Tasks();
-            newTask.title = req.body.title,
-            newTask.description = req.body.description,
-            newTask.categories = req.body.categories,
+            newTask.title = title;
+            newTask.description = description;
             newTask.userUserId = req.user.id;
-            const taskData = getRepository(Tasks).create(newTask);
-            const results = await getRepository(Tasks).save(taskData);
-            return res.json(results);
+            const categs = await categoryRepository.find({
+                categoryId: In(categories as number[])
+            });
+            newTask.categories = categs;
+            const taskData = await taskRepository.save(newTask);
+            return res.json(taskData);
+
         }
         return res.json({msg: 'Task already exists!'});
     } catch(err) {
@@ -55,12 +68,19 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
 export const updateTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
         // Check if the task is on the DB
-        const task = await getRepository(Tasks).findOne({
-            where: { 'userUserId': req.user.id, 'taskId': req.params.idTask }
+        const taskRepository = getRepository(Tasks);
+        const categoryRepository = getRepository(Categories);
+        const { idTask } = req.params;
+        const task = await taskRepository.findOne({
+            where: { 'userUserId': req.user.id, 'taskId': idTask }
         });
         if (task) {
-            const taskData = getRepository(Tasks).merge(task, req.body);
-            const results = await getRepository(Tasks).save(taskData);
+            const taskData = taskRepository.merge(task, req.body);
+            const categs = await categoryRepository.find({
+                categoryId: In(req.body.categories as number[])
+            });
+            taskData.categories = categs;
+            const results = await taskRepository.save(taskData);
             return res.json(results);
         }
         return res.json({msg: 'Task not found!'});
@@ -72,11 +92,14 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
 export const deleteTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
         // Check if the task is on the DB
-        const task = await getRepository(Tasks).findOne({
-            where: { 'userUserId': req.user.id, 'taskId': req.params.idTask }
+        // TODO if task is remove then remove categories in relationship
+        const taskRepository = getRepository(Tasks);
+        const { idTask } = req.params;
+        const task = await taskRepository.findOne({
+            where: { 'userUserId': req.user.id, 'taskId': idTask }
         });
         if (task) {
-            const results = await getRepository(Tasks).delete(req.params.idTask);
+            const results = await taskRepository.delete(idTask);
             return res.json(results);
         }
         return res.json({msg: 'Task not found!'});

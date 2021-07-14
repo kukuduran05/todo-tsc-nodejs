@@ -1,23 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
 import { getRepository  } from 'typeorm';
-import { hash, match } from '../utils/hashing';
+import { match } from '../utils/hashing';
 import { Users } from '../entity/users';
 import Jwt from "jsonwebtoken";
 import Boom from '@hapi/boom';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await getRepository(Users).findOne({'email': req.body.email});
-        if (!user) {
-            let newUser = new Users();
-            newUser.name = req.body.name;
-            newUser.lastname = req.body.lastname;
-            newUser.email = req.body.email;
-            // Encripting password
-            const pass = await hash(req.body.password);
-            newUser.password = pass;
-            const userData = getRepository(Users).create(newUser);
-            const results = await getRepository(Users).save(userData);
+        const userRepository = getRepository(Users);
+        const { name, lastname, email, password } = req.body;
+        const existUser = await userRepository.findOne({'email': email});
+        if (!existUser) {
+            var newUser = {
+                name,
+                lastname,
+                email,
+                password
+            }
+            const userData = userRepository.create(newUser);
+            const results = await userRepository.save(userData);
             return res.json(results);
         }
         return res.json({msg: 'Username already exists!'});
@@ -28,10 +29,10 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
 export const login = async (req: Request, res: Response , next: NextFunction) => {
     try {
-        const user = await getRepository(Users).findOne({'email': req.body.email});
+        const { email, password} = req.body;
+        const user = await getRepository(Users).findOne({'email': email});
         if(user){
-            const loginUser = req.body;
-            let isPasswordMatching = await match(loginUser.password, user.password);
+            let isPasswordMatching = await match(password, user.password);
             if(isPasswordMatching === true) {
                 // Create Token
                 let secret:any = process.env.TOKEN_SECRET;
@@ -41,7 +42,6 @@ export const login = async (req: Request, res: Response , next: NextFunction) =>
                 }, secret)
     
                 return res.header('auth-token', token).json({
-                    error: null,
                     data: {token}
                 })
             }

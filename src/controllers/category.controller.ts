@@ -5,7 +5,8 @@ import Boom from '@hapi/boom';
 
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const categories = await getRepository(Categories).find({
+        const categoryRepository = getRepository(Categories);
+        const categories = await categoryRepository.find({
             select: ['categoryId', 'title', 'description'],
             where: { 'userUserId': req.user.id }
         });
@@ -17,10 +18,12 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
 
 export const getCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const category = await getRepository(Categories).findOne({
+        const categoryRepository = getRepository(Categories);
+        const { idCategory } = req.params;
+        const category = await categoryRepository.findOne({
             select: ['categoryId', 'title', 'description'],
             where: {
-                'categoryId': req.params.idCategory,
+                'categoryId': idCategory,
                 'userUserId': req.user.id
             }
         });
@@ -33,17 +36,18 @@ export const getCategory = async (req: Request, res: Response, next: NextFunctio
 export const createCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Check if the category is on the DB
-        const category = await getRepository(Categories).findOne({
-            where: { 'userUserId': req.user.id, 'title': req.body.title }
+        const categoryRepository = getRepository(Categories);
+        const { title, description } = req.body;
+        const category = await categoryRepository.findOne({
+            where: { 'userUserId': req.user.id, 'title': title }
         });
-    
         if (category === undefined) {
             let newCategory = new Categories();
-            newCategory.title = req.body.title;
-            newCategory.description = req.body.description;
+            newCategory.title = title;
+            newCategory.description = description;
             newCategory.userUserId = req.user.id;
-            const categoryData = getRepository(Categories).create(newCategory);
-            const results = await getRepository(Categories).save(categoryData);
+            const categoryData = categoryRepository.create(newCategory);
+            const results = await categoryRepository.save(categoryData);
             return res.json(results);
         }
         return res.json({msg: 'Category already exists!'});
@@ -55,12 +59,13 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
 export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Check if the category is on the DB
-        const category = await getRepository(Categories).findOne({
+        const categoryRepository = getRepository(Categories);
+        const category = await categoryRepository.findOne({
             where: { 'categoryId': req.params.idCategory ,'userUserId': req.user.id }
         });
         if (category) {
-            const categoryData = getRepository(Categories).merge(category, req.body);
-            const results = await getRepository(Categories).save(categoryData);
+            const categoryData = categoryRepository.merge(category, req.body);
+            const results = await categoryRepository.save(categoryData);
             return res.json(results);    
         }
         return res.json({msg: 'Category not found!'});
@@ -72,15 +77,17 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
 export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Check if the category is on the DB
-        const category = await getRepository(Categories).findOne({
+        const categoryRepository = getRepository(Categories);
+        const { idCategory } = req.params;
+        const category = await categoryRepository.findOne({
             where: {
-                'categoryId': req.params.idCategory,
+                'categoryId': idCategory,
                 'userUserId': req.user.id
             }
         });
         if (category) {
-            const results = await getRepository(Categories).delete(req.params.idCategory);
-            return res.json(results);
+            await categoryRepository.delete(idCategory);
+            return res.json({msg: `Category ${category.title} was deleted!`});
         }
         return res.json({msg: 'Category not found!'});
     } catch(err) {

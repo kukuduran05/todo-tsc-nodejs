@@ -5,7 +5,8 @@ import Boom from '@hapi/boom';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await getRepository(Users).find({
+        const userRepository = getRepository(Users);
+        const users = await userRepository.find({
             select: ['userId', 'name', 'lastname', 'email']
         });
         return res.json(users);
@@ -16,9 +17,11 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await getRepository(Users).findOne({
+        const { idUser } = req.params;
+        const userRepository = getRepository(Users);
+        const user = await userRepository.findOne({
             select: ['userId', 'name', 'lastname', 'email'],
-            where: { 'userId': req.params.idUser}
+            where: { 'userId': idUser}
         });
         return res.json(user);
     } catch (err) {
@@ -28,15 +31,18 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await getRepository(Users).findOne({'email': req.body.email});
-        if (!user) {
-            let newUser = new Users();
-            newUser.name = req.body.name;
-            newUser.lastname = req.body.lastname;
-            newUser.email = req.body.email;
-            newUser.password = req.body.password;
-            const userData = getRepository(Users).create(newUser);
-            const results = await getRepository(Users).save(userData);
+        const userRepository = getRepository(Users);
+        const { name, lastname, email, password } = req.body;
+        const existUser = await userRepository.findOne({'email': email});
+        if (!existUser) {
+            var newUser = {
+                name,
+                lastname,
+                email,
+                password
+            }
+            const userData = userRepository.create(newUser);
+            const results = await userRepository.save(userData);
             return res.json(results);
         }
         return res.json({msg: 'Username already exists!'});
@@ -47,10 +53,12 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await getRepository(Users).findOne(req.params.idUser);
-        if (user) {
-          const userData = getRepository(Users).merge(user, req.body);
-          const results = await getRepository(Users).save(userData);
+        const userRepository = getRepository(Users);
+        const { idUser } = req.params;
+        const existUser = await userRepository.findOne(idUser);
+        if (existUser) {
+          const userData = userRepository.merge(existUser, req.body);
+          const results = await userRepository.save(userData);
           return res.json(results);
         }
         return res.json({msg: 'User not found!'});
@@ -61,10 +69,12 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await getRepository(Users).findOne(req.params.idUser);
-        if (user) {
-            const results = await getRepository(Users).delete(req.params.idUser);
-            return res.json(results);
+        const userRepository = getRepository(Users);
+        const { idUser } = req.params;
+        const existUser = await userRepository.findOne(idUser);
+        if (existUser) {
+            await userRepository.delete(idUser);
+            return res.json({msg: `User ${existUser.email} was deleted!`});
         }
         return res.json({msg: 'User not found!'});
     } catch(err) {
