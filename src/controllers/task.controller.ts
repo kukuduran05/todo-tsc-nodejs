@@ -22,30 +22,22 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction) 
 
 export const getTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
-        const taskRepository = getRepository(Tasks);
         const { idTask } = req.params;
-        const task = await taskRepository.findOne({
-            select: ['taskId', 'title', 'description'],
-            relations: ['categories'],
-            where: { 'userUserId': req.user.id, 'taskId': idTask }
-        });
+        const task = await findOneTask(req.user.id, idTask);
         return res.json(task);
     } catch(err) {
         return next(Boom.badRequest(err.message));
     }
-    
 }
 
 export const createTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
-        // Check if the task is on the DB
         const { title, description, categories } = req.body;
         const taskRepository = getRepository(Tasks);
         const categoryRepository = getRepository(Categories);
         const task = await taskRepository.findOne({
             where: { 'userUserId': req.user.id, 'title': title }
         });
-    
         if (task === undefined) {
             let newTask = new Tasks();
             newTask.title = title;
@@ -71,11 +63,7 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
         const taskRepository = getRepository(Tasks);
         const categoryRepository = getRepository(Categories);
         const { idTask } = req.params;
-        const existTask = await taskRepository.findOne({
-            select: ['taskId', 'title', 'description'],
-            relations: ['categories'],
-            where: { 'userUserId': req.user.id, 'taskId': idTask }
-        });
+        const existTask = await findOneTask(req.user.id, idTask);
         if (existTask) {
             const taskData = taskRepository.merge(existTask, req.body);
             const categs = await categoryRepository.find({
@@ -96,10 +84,7 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
         // Check if the task is on the DB
         const taskRepository = getRepository(Tasks);
         const { idTask } = req.params;
-        const existTask = await taskRepository.findOne({
-            relations: ['categories'],
-            where: { 'userUserId': req.user.id, 'taskId': idTask }
-        });
+        const existTask = await findOneTask(req.user.id, idTask);
         if (existTask) {
             await taskRepository.delete(idTask);
             return res.json({msg: `Task with ID: ${idTask} was deleted!`});
@@ -109,3 +94,13 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
         return next(Boom.badRequest(err.message));
     }
 };
+
+const findOneTask = async(userId: number, idTask: string) => {
+    const taskRepository = getRepository(Tasks);
+    const task = await taskRepository.findOne({
+        select: ['taskId', 'title', 'description'],
+        relations: ['categories'],
+        where: { 'userUserId': userId, 'taskId': idTask }
+    });
+    return task;
+}
