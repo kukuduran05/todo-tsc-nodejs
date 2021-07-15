@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, AfterLoad } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, AfterLoad, AfterInsert } from 'typeorm';
 import { Categories } from './categories';
 import { Users } from './users';
 
@@ -20,7 +20,7 @@ export class Tasks {
     @ManyToOne(() => Users, user => user.tasks, {onDelete: 'SET NULL'})
     user: Users;
 
-    @ManyToMany(() => Categories, category => category.tasks)
+    @ManyToMany(() => Categories, category => category.tasks, {cascade: true})
     @JoinTable()
     categories: Categories[];
 }

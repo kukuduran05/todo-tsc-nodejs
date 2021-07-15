@@ -71,11 +71,13 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
         const taskRepository = getRepository(Tasks);
         const categoryRepository = getRepository(Categories);
         const { idTask } = req.params;
-        const task = await taskRepository.findOne({
+        const existTask = await taskRepository.findOne({
+            select: ['taskId', 'title', 'description'],
+            relations: ['categories'],
             where: { 'userUserId': req.user.id, 'taskId': idTask }
         });
-        if (task) {
-            const taskData = taskRepository.merge(task, req.body);
+        if (existTask) {
+            const taskData = taskRepository.merge(existTask, req.body);
             const categs = await categoryRepository.find({
                 categoryId: In(req.body.categories as number[])
             });
@@ -92,15 +94,15 @@ export const updateTask = async (req: Request, res: Response, next: NextFunction
 export const deleteTask = async (req: Request, res: Response, next: NextFunction)=> {
     try {
         // Check if the task is on the DB
-        // TODO if task is remove then remove categories in relationship
         const taskRepository = getRepository(Tasks);
         const { idTask } = req.params;
-        const task = await taskRepository.findOne({
+        const existTask = await taskRepository.findOne({
+            relations: ['categories'],
             where: { 'userUserId': req.user.id, 'taskId': idTask }
         });
-        if (task) {
-            const results = await taskRepository.delete(idTask);
-            return res.json(results);
+        if (existTask) {
+            await taskRepository.delete(idTask);
+            return res.json({msg: `Task with ID: ${idTask} was deleted!`});
         }
         return res.json({msg: 'Task not found!'});
     } catch(err) {
