@@ -18,8 +18,8 @@ CREATE TABLE `categories` (
   `userUserId` int DEFAULT NULL,
   PRIMARY KEY (`categoryId`),
   KEY `fk_users_cats_idx` (`userUserId`),
-  CONSTRAINT `fk_users_cats` FOREIGN KEY (`userUserId`) REFERENCES `users` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `fk_users_cats` FOREIGN KEY (`userUserId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
@@ -29,7 +29,7 @@ CREATE TABLE `tasks` (
   `userUserId` int NOT NULL,
   PRIMARY KEY (`taskId`),
   KEY `fk_users_tasks_idx` (`userUserId`),
-  CONSTRAINT `fk_users_tasks` FOREIGN KEY (`userUserId`) REFERENCES `users` (`userId`)
+  CONSTRAINT `fk_users_tasks` FOREIGN KEY (`userUserId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `tasks_categories_categories`;
