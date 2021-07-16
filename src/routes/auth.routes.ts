@@ -12,4 +12,4 @@ authRouter.post("/register", validationHandler(createUserSchema), Auth.register)
 authRouter.post("/login", validationHandler(loginUserSchema), Auth.login);
 
 // VerifyToken
-authRouter.get('/verifyToken', validationHandler(loginUserSchema), Auth.verifyToken);
+authRouter.get('/verifyToken', Auth.verifyToken);
