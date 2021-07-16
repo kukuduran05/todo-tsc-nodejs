@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import { Users } from '../entity/users';
 import Boom from '@hapi/boom';
+import { hash } from '../utils/hashing';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -18,7 +19,8 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { idUser } = req.params;
-        const user = await findOneUser(idUser);
+        const select: string[] = ['userId', 'name', 'lastname', 'email'];
+        const user = await findOneUser(idUser, select);
         return res.json(user);
     } catch (err) {
         return next(Boom.badRequest(err.message));
@@ -51,11 +53,13 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     try {
         const userRepository = getRepository(Users);
         const { idUser } = req.params;
-        const existUser = await findOneUser(idUser);
+        const select: any[] = ['userId', 'name', 'lastname', 'email', 'password'];
+        const existUser = await findOneUser(idUser, select);
         if (existUser) {
-          const userData = userRepository.merge(existUser, req.body);
-          const results = await userRepository.save(userData);
-          return res.json(results);
+            const userData = userRepository.merge(existUser, req.body);
+            userData.password = await hash(userData.password);
+            const results = await userRepository.save(userData);
+            return res.json(results);
         }
         return res.json({msg: 'User not found!'});
     } catch(err) {
@@ -67,7 +71,8 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     try {
         const userRepository = getRepository(Users);
         const { idUser } = req.params;
-        const existUser = await findOneUser(idUser);
+        const select: string[] = [];
+        const existUser = await findOneUser(idUser, select);
         if (existUser) {
             await userRepository.delete(idUser);
             return res.json({msg: `User ${existUser.email} was deleted!`});
@@ -78,10 +83,10 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-const findOneUser = async(idUser: string) => {
+const findOneUser = async(idUser: string, selectQuery: any) => {
     const userRepository = getRepository(Users);
     const user = await userRepository.findOne({
-        select: ['userId', 'name', 'lastname', 'email'],
+        select: selectQuery,
         where: { 'userId': idUser}
     });
     return user;
