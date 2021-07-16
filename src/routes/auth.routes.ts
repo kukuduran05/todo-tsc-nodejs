@@ -10,3 +10,6 @@ authRouter.post("/register", validationHandler(createUserSchema), Auth.register)
 
 // Login
 authRouter.post("/login", validationHandler(loginUserSchema), Auth.login);
+
+// VerifyToken
+authRouter.get('/verifyToken', Auth.verifyToken);

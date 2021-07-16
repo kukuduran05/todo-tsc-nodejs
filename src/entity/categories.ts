@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany } from 'typeorm';
+import { Tasks } from './tasks';
 import { Users } from './users';
 
 @Entity()
@@ -16,6 +17,9 @@ export class Categories {
     @Column()
     userUserId: number;
     
-    @ManyToOne(() => Users, user => user.categories)
+    @ManyToOne(() => Users, user => user.categories, {onDelete: 'SET NULL'})
     user: Users;
+
+    @ManyToMany(() => Tasks, task => task.categories)
+    tasks: Tasks[];
 }

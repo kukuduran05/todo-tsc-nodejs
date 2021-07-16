@@ -1,58 +1,88 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { getRepository } from 'typeorm';
-import { hash } from '../utils/hashing';
 import { Users } from '../entity/users';
+import Boom from '@hapi/boom';
 
-export const getUsers = async (req: Request, res: Response): Promise<Response> => {
-    const users = await getRepository(Users).find({
-        select: ['userId', 'name', 'lastname', 'email']
-    });
-    return res.json(users);
-}
-
-export const getUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(Users).findOne({
-        select: ['userId', 'name', 'lastname', 'email'],
-        where: { 'userId': req.params.idUser}
-    });
-    return res.json(user);
-}
-
-export const createUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(Users).findOne({'email': req.body.email});
-    if (!user) {
-        let newUser = new Users();
-        newUser.name = req.body.name;
-        newUser.lastname = req.body.lastname;
-        newUser.email = req.body.email;
-        // Encripting password
-        const pass = await hash(req.body.password);
-        newUser.password = pass;
-        const userData = getRepository(Users).create(newUser);
-        const results = await getRepository(Users).save(userData);
-        return res.json(results);
+export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userRepository = getRepository(Users);
+        const users = await userRepository.find({
+            select: ['userId', 'name', 'lastname', 'email']
+        });
+        return res.json(users);
+    } catch (err) {
+        return next(Boom.badRequest(err.message));
     }
-    return res.json({msg: 'Username already exists!'});
 }
 
-export const updateUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(Users).findOne(req.params.idUser);
-    if (user) {
-      const userData = getRepository(Users).merge(user, req.body);
-      // Encripting password
-      const pass = await hash(userData.password);
-      userData.password = pass;
-      const results = await getRepository(Users).save(user);
-      return res.json(results);
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { idUser } = req.params;
+        const user = await findOneUser(idUser);
+        return res.json(user);
+    } catch (err) {
+        return next(Boom.badRequest(err.message));
     }
-    return res.json({msg: 'User not found!'});
 }
 
-export const deleteUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(Users).findOne(req.params.idUser);
-    if (user) {
-        const results = await getRepository(Users).delete(req.params.idUser);
-        return res.json(results);
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userRepository = getRepository(Users);
+        const { name, lastname, email, password } = req.body;
+        const existUser = await userRepository.findOne({'email': email});
+        if (!existUser) {
+            var newUser = {
+                name,
+                lastname,
+                email,
+                password
+            }
+            const userData = userRepository.create(newUser);
+            const results = await userRepository.save(userData);
+            return res.json(results);
+        }
+        return res.json({msg: 'Username already exists!'});
+    } catch (err) {
+        return next(Boom.badRequest(err.message));
     }
-    return res.json({msg: 'User not found!'});
+}
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userRepository = getRepository(Users);
+        const { idUser } = req.params;
+        const existUser = await findOneUser(idUser);
+        if (existUser) {
+          const userData = userRepository.merge(existUser, req.body);
+          const results = await userRepository.save(userData);
+          return res.json(results);
+        }
+        return res.json({msg: 'User not found!'});
+    } catch(err) {
+        return next(Boom.badRequest(err.message));
+    }
+}
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userRepository = getRepository(Users);
+        const { idUser } = req.params;
+        const existUser = await findOneUser(idUser);
+        if (existUser) {
+            await userRepository.delete(idUser);
+            return res.json({msg: `User ${existUser.email} was deleted!`});
+        }
+        return res.json({msg: 'User not found!'});
+    } catch(err) {
+        return next(Boom.badRequest(err.message));
+    }
 };
+
+const findOneUser = async(idUser: string) => {
+    const userRepository = getRepository(Users);
+    const user = await userRepository.findOne({
+        select: ['userId', 'name', 'lastname', 'email'],
+        where: { 'userId': idUser}
+    });
+    return user;
+}
