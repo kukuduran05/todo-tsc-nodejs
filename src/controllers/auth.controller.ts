@@ -39,15 +39,46 @@ export const login = async (req: Request, res: Response , next: NextFunction) =>
                 const token = Jwt.sign({
                     id: user.userId,
                     email: user.email
-                }, secret)
+                }, secret, {
+                    expiresIn: 60 * 60 * 24 // expires in 24 hours
+                })
     
                 return res.header('auth-token', token).json({
-                    data: {token}
-                })
+                    user: email, token
+                });
             }
         }
         return res.json({msg: 'User not found!'});
     } catch (err) {
         return next(Boom.badRequest(err.message));
     }
+}
+
+// verify the token and return it if it's valid
+export const verifyToken = async (req: Request, res: Response , next: NextFunction) => {
+    // check header or url parameters or post parameters for token
+    var token:any = req.query.token;
+    console.log(token);
+    if (!token) {
+      return res.status(400).json({
+        error: true,
+        message: "Token is required."
+      });
+    }
+    
+    // check token that was passed by decoding token using secret
+    let secret:any = process.env.TOKEN_SECRET;
+    Jwt.verify(token, secret, function (err:any, user:any) {
+        if (err) return res.status(401).json({
+            error: true,
+            message: "Invalid token."
+        });
+
+        // get basic user details
+        var userObj = {
+            userId: user.id,
+            email: user.email
+          };
+        return res.json({ user: userObj, token });
+    });
 }
