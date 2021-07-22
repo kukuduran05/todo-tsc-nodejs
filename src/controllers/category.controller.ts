@@ -1,15 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { Categories } from '../entity/categories';
 import Boom from '@hapi/boom';
+import * as CategoriesService from '../services/categories';
 
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const categoryRepository = getRepository(Categories);
-        const categories = await categoryRepository.find({
-            select: ['categoryId', 'title', 'description'],
-            where: { 'userUserId': req.user.id }
-        });
+        const categories = await CategoriesService.findAll(req.user.id);
         return res.json(categories);
     } catch (err) {
         return next(Boom.badRequest(err.message));
@@ -19,7 +14,7 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
 export const getCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { idCategory } = req.params;
-        const category = await findOneCategory(req.user.id, idCategory);
+        const category = await CategoriesService.find(req.user.id, idCategory);
         return res.json(category);
     } catch(err) {
         return next(Boom.badRequest(err.message));
@@ -28,22 +23,9 @@ export const getCategory = async (req: Request, res: Response, next: NextFunctio
 
 export const createCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // Check if the category is on the DB
-        const categoryRepository = getRepository(Categories);
         const { title, description } = req.body;
-        const category = await categoryRepository.findOne({
-            where: { 'userUserId': req.user.id, 'title': title }
-        });
-        if (category === undefined) {
-            let newCategory = new Categories();
-            newCategory.title = title;
-            newCategory.description = description;
-            newCategory.userUserId = req.user.id;
-            const categoryData = categoryRepository.create(newCategory);
-            const results = await categoryRepository.save(categoryData);
-            return res.json(results);
-        }
-        return res.json({msg: 'Category already exists!'});
+        const newCat = await CategoriesService.create(title, description, req.user.id);
+        return res.json(newCat);
     } catch (err) {
         return next(Boom.badRequest(err.message));
     }
@@ -52,14 +34,9 @@ export const createCategory = async (req: Request, res: Response, next: NextFunc
 export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { idCategory } = req.params;
-        const category = await findOneCategory(req.user.id, idCategory)
-        if (category) {
-            const categoryRepository = getRepository(Categories);
-            const categoryData = categoryRepository.merge(category, req.body);
-            const results = await categoryRepository.save(categoryData);
-            return res.json(results);    
-        }
-        return res.json({msg: 'Category not found!'});
+        const data = req.body;
+        const results = await CategoriesService.update(idCategory, req.user.id, data);
+        return res.json(results);
     } catch(err) {
         return next(Boom.badRequest(err.message));
     }
@@ -67,27 +44,11 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
 
 export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const categoryRepository = getRepository(Categories);
         const { idCategory } = req.params;
-        const category = await findOneCategory(req.user.id, idCategory);
-        if (category) {
-            await categoryRepository.delete(idCategory);
-            return res.json({msg: `Category ${category.title} was deleted!`});
-        }
-        return res.json({msg: 'Category not found!'});
+        const results = await CategoriesService.deleteCategory(idCategory, req.user.id);
+        return res.json(results);
     } catch(err) {
         return next(Boom.badRequest(err.message));
     }
 };
 
-const findOneCategory = async(userId: number, idCategory: string) => {
-    const categoryRepository = getRepository(Categories);
-    const category = await categoryRepository.findOne({
-        select: ['categoryId', 'title', 'description'],
-        where: {
-            'categoryId': idCategory,
-            'userUserId': userId
-        }
-    });
-    return category;
-}
