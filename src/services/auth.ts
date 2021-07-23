@@ -45,30 +45,3 @@ export async function login(email: string, password: string) {
     }
     return info;
 }
-
-export async function verify(token: string){
-    if (!token) {
-        return {
-            status: 400,
-            error: false,
-            message: "Token is required."
-        };
-    }
-
-    // check token that was passed by decoding token using secret
-    let secret:any = process.env.TOKEN_SECRET;
-    Jwt.verify(token, secret, function (err:any, user:any) {
-        if (err) return {
-            status: 401,
-            error: true,
-            message: "Invalid token."
-        };
-
-        // get basic user details
-        var userObj = {
-            userId: user.id,
-            email: user.email
-        };
-        return { user: userObj, token };
-    });
-}

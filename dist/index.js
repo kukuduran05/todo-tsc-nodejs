@@ -30,6 +30,10 @@ const errorHandlers_1 = require("./middleware/errorHandlers");
 const notFoundHandler_1 = require("./middleware/notFoundHandler");
 const typeorm_1 = require("typeorm");
 require("reflect-metadata");
+// For Docs
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
+const swaggerOptions_1 = require("./swaggerOptions");
 // Initialize configuration
 dotenv.config();
 // Routes
@@ -42,8 +46,10 @@ app.use(morgan_1.default('dev'));
 app.use(express_1.urlencoded({ extended: false }));
 app.use(express_1.default.json());
 app.use(cors_1.default());
+const specs = swagger_jsdoc_1.default(swaggerOptions_1.options);
 // Api routes
 app.use(index_routes_1.default);
+app.use('/docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
 // Catch 404
 app.use(notFoundHandler_1.notFoundHandler);
 // Errors
