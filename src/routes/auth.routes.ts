@@ -7,81 +7,66 @@ export const authRouter = express.Router();
 
 /**
  * @swagger
- * components:
- *  schemas:
- *      User:
- *          type: object
- *          properties:
- *              name:
- *                  type: string,
- *                  description: The name of the user
- *              lasname:
- *                  type: string,
- *                  description: The lastname of the user
- *              email:
- *                  type: string,
- *                  description: The email of the user
- *              password:
- *                  type: string,
- *                  description: The password of the user
- *          required:
- *              - name
- *              - email
- *              - password
- *          example:
- *              name: Karla,
- *              lastname: Solis
- *              email: Karla.Solis@hotmail.com
- *              password: Secret
- *          UserNotFound:
- *              type: object
- *              properties:
- *                  msg:
- *                      type: string
- *                      description: A message for the not found user
- *              example:
- *                  msg:
- *                      User was not found
- * 
- *      Login:
- *          type: object
- *          properties:
- *              email:
- *                  type: string,
- *                  description: The email of the user
- *              password:
- *                  type: password
- *                  description: The password of the user
- *          required:
- *              - email
- *              - password
- *          example:
- *              email: Karla.Solis@hotmail.com
- *              password: Secret
- *          UserNotFound:
- *              type: object
- *              properties:
- *                  msg:
- *                      type: string
- *                      description: A message for the not found user
- *              example:
- *                  msg:
- *                      User was not found
+ * schemes:
+ * - http
+ * tags:
+ * - name: Auth
+ * description: Endpoints for authentication
  */
 
 /**
  * @swagger
- * tags:
- *  name: Users
- *  description: Users endpoint
+ * components:
+ *  schemas:
+ *      Login:
+ *          type: object
+ *          properties:
+ *              email:
+ *                  type: string
+ *                  description: The email for login
+ *              password:
+ *                  type: string
+ *                  description: The password for login in clear text
+ *          required:
+ *              - email
+ *              - password
+ *          example:
+ *              email: karla.solis@hotmail.com
+ *              password: secret
+ * 
+ *      User:
+ *          type: object
+ *          properties:
+ *              userId:
+ *                  type: integer
+ *                  description: The auto-generated id of user
+ *              name:
+ *                  type: string
+ *                  description: The name of the user
+ *              lastname:
+ *                  type: string
+ *                  description: The lastname of the user
+ *              email:
+ *                  type: string
+ *                  description: The email of the user
+ *              password:
+ *                  type: string
+ *                  description: The password of the user
+ *          example:
+ *              name: karla
+ *              lastname: solis
+ *              email: karla.solis@hotmail.com
+ *              password: secret
  */
 
 /**
  * @swagger
  * /auth/register:
  *  post:
- *      summary: Create a new account for new users
- *      tags: [Users]
+ *      summary: Register an user
+ *      tags: ["Auth"]
+ *      description: "If you don't have an account you can create one."
+ *      operationId: registerUser
  *      requestBody:
  *          required: true
  *          content:
@@ -90,20 +75,21 @@ export const authRouter = express.Router();
  *                      $ref: '#/components/schemas/User'
  *      responses:
  *          200:
- *              description: The user was successfully created
+ *              description: The User was created successfully
  *          500:
  *              description: Some server error
  */
 // Register
 authRouter.post("/register", validationHandler(createUserSchema), Auth.register);
 
-
 /**
  * @swagger
  * /auth/login:
  *  post:
- *      summary: Create an access login
- *      tags: [Users]
+ *      summary: Logs user into the system
+ *      tags: ["Auth"]
+ *      description: ""
+ *      operationId: loginUser
  *      requestBody:
  *          required: true
  *          content:
@@ -112,7 +98,7 @@ authRouter.post("/register", validationHandler(createUserSchema), Auth.register)
  *                      $ref: '#/components/schemas/Login'
  *      responses:
  *          200:
- *              description: The access login was successfully
+ *              description: The Login was successfully, was generated the access token
  *          500:
  *              description: Some server error
  */

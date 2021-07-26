@@ -2,13 +2,13 @@ export const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "TODO Tasks",
-            version: '1.0.0',
-            description: 'A Simple express library API for create new Tasks with Categories'
+            title: "TODO API",
+            version: "1.0.0",
+            description: "A simple express Rest API for create tasks"
         },
         servers: [
             {
-                url: 'http://localhost:5000'
+                url: "http://localhost:5000"
             }
         ]
     },

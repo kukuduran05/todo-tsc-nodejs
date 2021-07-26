@@ -30,14 +30,14 @@ const errorHandlers_1 = require("./middleware/errorHandlers");
 const notFoundHandler_1 = require("./middleware/notFoundHandler");
 const typeorm_1 = require("typeorm");
 require("reflect-metadata");
-// For Docs
+// Swagger
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swaggerOptions_1 = require("./swaggerOptions");
 // Initialize configuration
 dotenv.config();
 // Routes
 const index_routes_1 = __importDefault(require("./routes/index.routes"));
+const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const app = express_1.default();
 typeorm_1.createConnection();
 const PORT = parseInt(process.env.PORT, 10);
@@ -49,7 +49,7 @@ app.use(cors_1.default());
 const specs = swagger_jsdoc_1.default(swaggerOptions_1.options);
 // Api routes
 app.use(index_routes_1.default);
-app.use('/docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
+app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(specs));
 // Catch 404
 app.use(notFoundHandler_1.notFoundHandler);
 // Errors

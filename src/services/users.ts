@@ -13,6 +13,7 @@ export async function findAll() {
 export async function find(id: string) {
     const select: string[] = ['userId', 'name', 'lastname', 'email'];
     const user = await findOneUser(id, select);
+    console.log(user);
     if (user === undefined) {
         return {msg: "User not found!"}
     }
@@ -51,7 +52,7 @@ export async function update(idUser: string, data: any) {
 
 export async function deleteUser(idUser: string) {
     const userRepository = getRepository(Users);
-    const select: string[] = [];
+    const select: any[] = ['userId', 'name', 'lastname', 'email'];
     const existUser = await findOneUser(idUser, select);
     if (existUser) {
         await userRepository.delete(idUser);

@@ -7,16 +7,17 @@ import { notFoundHandler } from './middleware/notFoundHandler';
 import { createConnection } from 'typeorm';
 import 'reflect-metadata';
 
-// For Docs
-import swaggerUI from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
-import { options } from './swaggerOptions';
+// Swagger
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
+import { options } from "./swaggerOptions";
 
 // Initialize configuration
 dotenv.config();
 
 // Routes
 import IndexRoutes from './routes/index.routes';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 const app = express();
 createConnection();
@@ -32,7 +33,7 @@ const specs = swaggerJSDoc(options);
 
 // Api routes
 app.use(IndexRoutes);
-app.use('/docs', swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 // Catch 404
 app.use(notFoundHandler);
