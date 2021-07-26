@@ -7,9 +7,6 @@ export const userRouter = express.Router();
 
 /**
  * @swagger
- * tags:
- * - name: Users
- * description: Endpoints for user operations
  * components:
  *  securitySchemes:
  *      token:
@@ -23,7 +20,7 @@ export const userRouter = express.Router();
  *          required: true
  *          schema:
  *              type: string
- *          description: the user id
+ *          description: The user Id
  */
 
 /**
@@ -31,7 +28,8 @@ export const userRouter = express.Router();
  * /users:
  *  post:
  *      summary: Create user
- *      tags: ["Users"]
+ *      tags: 
+ *          - Users
  *      description: "Create new user account."
  *      operationId: createUser
  *      requestBody:
@@ -56,7 +54,8 @@ userRouter.post("/", validationHandler(createUserSchema), Users.createUser);
  * /users:
  *  get:
  *      summary: List of users
- *      tags: ["Users"]
+ *      tags: 
+ *          - Users
  *      description: "Get list of users"
  *      operationId: getUsers
  *      parameters: []
@@ -76,7 +75,8 @@ userRouter.get("/", Users.getUsers);
  * /users/{userId}:
  *  get:
  *      summary: Get user by Id
- *      tags: ["Users"]
+ *      tags: 
+ *          - Users
  *      description: ""
  *      operationId: getUser
  *      parameters:
@@ -85,7 +85,7 @@ userRouter.get("/", Users.getUsers);
  *          - token: []
  *      responses:
  *          200:
- *              description: The user information is showed
+ *              description: The user information is appear
  *          500:
  *              description: Some server error
  *          400:
@@ -99,7 +99,8 @@ userRouter.get("/:idUser", Users.getUser);
  * /users/{userId}:
  *  put:
  *      summary: Update the user by id
- *      tags: ["Users"]
+ *      tags: 
+ *          - Users
  *      description: ""
  *      operationId: updateUser
  *      parameters:
@@ -129,7 +130,8 @@ userRouter.put("/:idUser", validationHandler(updateUserSchema) , Users.updateUse
  * /users/{userId}:
  *  delete:
  *      summary: Delete user
- *      tags: ["Users"]
+ *      tags: 
+ *          - Users
  *      description: ""
  *      operationId: deleteUser
  *      parameters:

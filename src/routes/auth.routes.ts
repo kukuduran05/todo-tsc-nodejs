@@ -9,8 +9,6 @@ export const authRouter = express.Router();
  * @swagger
  * schemes:
  * - http
- * tags:
- * - name: Auth
  * description: Endpoints for authentication
  */
 
@@ -27,9 +25,6 @@ export const authRouter = express.Router();
  *              password:
  *                  type: string
  *                  description: The password for login in clear text
- *          required:
- *              - email
- *              - password
  *          example:
  *              email: karla.solis@hotmail.com
  *              password: secret
@@ -64,7 +59,8 @@ export const authRouter = express.Router();
  * /auth/register:
  *  post:
  *      summary: Register an user
- *      tags: ["Auth"]
+ *      tags: 
+ *          - Auth
  *      description: "If you don't have an account you can create one."
  *      operationId: registerUser
  *      requestBody:
@@ -87,7 +83,8 @@ authRouter.post("/register", validationHandler(createUserSchema), Auth.register)
  * /auth/login:
  *  post:
  *      summary: Logs user into the system
- *      tags: ["Auth"]
+ *      tags: 
+ *          - Auth
  *      description: ""
  *      operationId: loginUser
  *      requestBody:
