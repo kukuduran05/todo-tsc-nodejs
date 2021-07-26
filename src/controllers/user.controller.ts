@@ -13,6 +13,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log("llegando");
         const { idUser } = req.params;
         const user = await UsersService.find(idUser);
         return res.json(user);
