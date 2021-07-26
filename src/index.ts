@@ -9,7 +9,6 @@ import 'reflect-metadata';
 
 // Swagger
 import swaggerUI from "swagger-ui-express";
-import swaggerJsDoc from "swagger-jsdoc";
 import { options } from "./swaggerOptions";
 
 // Initialize configuration
