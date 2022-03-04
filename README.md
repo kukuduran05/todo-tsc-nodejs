@@ -1,26 +1,25 @@
-El proyecto consiste en lo siguiente:
+OVERVIEW:
 
 Node.js Challenge:
-Desarrollar una API Rest que permita el manejo de un TODO list para varios usuarios.
-Requisitos:
-- Debe ser capaz de conectarse a una base de datos para guardar y extraer información.
-- Debe tener algún protocolo de autenticación para realizar operaciones.
-- Operaciones: 
-  * Obtener lista de un usuario
-  * Crear una tarea
-  * Actualizar una tarea
-  * Eliminar una tarea
-  * Ver una tarea
-  * Crear usuario email/password y otros datos de interes a criterio.
-  * Las tareas pueden tener categorias y pueden ser filtrados por ella.
-  * Un usuario no puede modificar tareas que no le pertenecen.
-- Utilizar metodos HTTP y codigos de estatus correctamente.
-Tecnologias:
-- Node.js con Express
-- Typescript
-- Base de datos a elegir
-OPCIONAL: Al terminar todo el desarrollo del backend seria GENIAL poder ver toda la logica funcionando en una APP frontend usando React.
+Develop a REST API that follow the TODO list management for multiple users.
 
+Requirements:
+- Connect to Database for save and read information.
+- Must to have some protocol for authentication.
+- Actions: 
+  * Get user list
+  * Create tasks
+  * Update tasks
+  * Delete tasks
+  * Get task
+  * Create user with email/password and other information.
+  * Tasks could to have categories and could to be filter by it.
+  * A user can't modify tasks that do not belong to him.
+- Must to have methods HTTP and status code correctly.
+Technologies:
+- Node.js with Express
+- Typescript
+- Database to choose
 
 // Install dependencies
 npm install
